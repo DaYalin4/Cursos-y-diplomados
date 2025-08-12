@@ -1,0 +1,56 @@
+Nivel 3
+Lección 1
+Mantenimiento de base de datos
+
+Los índices son estructuras especiales que mejoran drásticamente la velocidad de búsqueda y recuperación de datos en una base de datos, actuando como una "tabla de contenido" o "diccionario" para tus datos.
+Cómo Funcionan los Índices
+Estructura tipo árbol (generalmente B-tree o Hash) que almacena valores ordenados de columnas específicas.
+Apuntan a la ubicación física de los datos en las tablas.
+Se actualizan automáticamente cuando modificas los datos.
+
+Tipos Comunes de Índices
+Tipo de Índice	Descripción	Ejemplo de Uso
+Índice Clúster	Reordena físicamente la tabla según la columna indexada (solo puede haber uno por tabla).	Llaves primarias (PRIMARY KEY)
+Índice No Clúster	Estructura separada que apunta a los datos (puedes tener varios).	Columnas usadas frecuentemente en búsquedas (CREATE INDEX).
+Índice Único	Asegura que no haya valores duplicados (ej. correos electrónicos).	UNIQUE INDEX en columnas como email.
+Índice Compuesto	Combina múltiples columnas en un solo índice.	Búsquedas por nombre + apellido.
+
+¿Cuándo Usar Índices?
+✅ Columnas frecuentes en WHERE:
+SELECT * FROM productos WHERE categoria = 'electrónica';
+
+✅ Columnas en JOIN:
+SELECT * FROM pedidos p JOIN clientes c ON p.cliente_id = c.id;
+
+✅ Columnas en ORDER BY o GROUP BY:
+SELECT * FROM ventas ORDER BY fecha;
+
+
+¿Cuándo NO Usar Índices?
+❌ Tablas muy pequeñas (el índice puede ser más lento que escanear la tabla completa).
+❌ Columnas con pocos valores únicos (ej. "género" con solo 'M'/'F').
+❌ Tablas con muchas inserciones/actualizaciones (cada cambio debe actualizar el índice).
+
+Sintaxis Básica
+Crear un Índice:
+CREATE INDEX idx_nombre ON tabla(columna);
+
+
+Ejemplo:
+      CREATE INDEX idx_email ON usuarios(email);
+
+Índice Compuesto (múltiples columnas):
+      CREATE INDEX idx_nombre_apellido ON clientes(nombre, apellido);
+
+Eliminar un Índice:
+      DROP INDEX idx_nombre ON tabla;
+
+Ejemplo Avanzado: Índice en una Vista
+      -- Crear una vista
+      CREATE VIEW vista_ventas AS
+      SELECT cliente_id, SUM(total) AS total_gastado
+      FROM pedidos
+      GROUP BY cliente_id;
+      -- Crear un índice para la vista (soportado en algunos motores como SQL Server)
+      CREATE UNIQUE CLUSTERED INDEX idx_vista_ventas ON vista_ventas(cliente_id);
+

@@ -1,0 +1,13 @@
+PseInt 
+  Proceso P1
+    Definir 
+    <-
+    Escribir (imprime) 
+    Leer  (captura dato)  
+    (no olvidar los ;)
+  FinProceso
+
+*Operaciones Lógicas 
+And:   & 
+OR:   ||
+NOT:   !

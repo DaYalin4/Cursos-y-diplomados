@@ -1,0 +1,64 @@
+Vistas: Nivel 2 /Lección 4/ Consultas avanzadas 
+Las vistas son objetos de base de datos que actúan como tablas virtuales basadas en el resultado de una consulta SQL. No almacenan datos físicamente, sino que se generan dinámicamente cada vez que se consultan.
+
+Tipos de vistas
+Vistas simples (basadas en una sola tabla con filtros sencillos).
+Vistas complejas (con JOINs, GROUP BY, funciones agregadas).
+Vistas materializadas (almacenan físicamente el resultado para mejorar rendimiento, pero no se actualizan automáticamente).
+
+¿Cuándo usar vistas?
+✔ Cuando una consulta compleja se repite mucho.
+✔ Para ocultar columnas sensibles (ej: ocultar salario pero permitir ver nombre y departamento).
+✔ Para simplificar reportes y dashboards.
+
+Recordar: 
+COUNT(p.id): Cuenta el número de pedidos por cliente
+SUM(p.total): Suma el monto total de todos los pedidos
+MAX(p.fecha_pedido): Fecha del pedido más reciente
+AVG(p.total): Promedio del valor de los pedidos
+CASE WHEN: Suma condicional solo de pedidos completados
+
+
+Sintaxis básico: 
+CREATE VIEW nombre_vista AS
+SELECT columna1, columna2, ...
+FROM tabla1
+JOIN tabla2 ON condicion
+WHERE filtro;
+
+Ejemplo práctico
+      Supongamos que tenemos las tablas:
+      
+      Clientes (id, nombre, email)
+      Pedidos (id, cliente_id, fecha, total)
+      
+      Podemos crear una vista que muestre los clientes con sus pedidos:
+      
+      CREATE VIEW VistaClientesPedidos AS
+      SELECT c.nombre, p.fecha, p.total
+      FROM Clientes c
+      INNER JOIN Pedidos p ON c.id = p.cliente_id;
+      
+      Para Consultar la vista:
+      SELECT * FROM VistaClientesPedidos;
+
+Ejemplo avanzao 
+      
+      CREATE VIEW VentasPorCliente AS
+      SELECT 
+          c.nombre,
+          COUNT(p.id) AS total_pedidos,
+          SUM(p.total) AS monto_total,
+          MAX(p.fecha_pedido) AS ultima_compra,
+          AVG(p.total) AS promedio_compra,
+          SUM(CASE WHEN p.estado = 'completado' THEN p.total ELSE 0 END) AS total_completado
+      FROM 
+          Clientes c
+      LEFT JOIN 
+          Pedidos p ON c.id = p.cliente_id
+      WHERE 
+          p.estado = 'completado' OR p.id IS NULL
+      GROUP BY 
+          c.id, c.nombre
+      HAVING 
+          COUNT(p.id) > 0 OR COUNT(p.id) IS NULL;

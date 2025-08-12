@@ -1,0 +1,59 @@
+
+  INNER JOIN 
+    Sintaxis básica: 
+
+      SELECT tabla1.columnas 
+      FROM tabla1
+      INNER JOIN tabla2 ON tabla1.columna = tabla2.columna
+
+   Sintaxis con 3 tablas (Mejor manera para mantenimiento): 
+
+      SELECT 
+          c.nombre AS cliente,
+          p.fecha_pedido,
+          pr.nombre_producto,
+          pr.precio,
+          pr.cantidad,
+          p.total
+      FROM 
+          Clientes c
+      INNER JOIN 
+          Pedidos p ON c.id = p.cliente_id
+      INNER JOIN 
+          Productos pr ON p.id = pr.pedido_id
+      ORDER BY 
+          p.fecha_pedido;
+
+Otra forma: 
+      SELECT c.nombre, p.fecha_pedido, pr.nombre_producto
+      FROM Clientes c, Pedidos p, Productos pr
+      WHERE c.id = p.cliente_id
+      AND p.id = pr.pedido_id
+
+        
+Ejemplo: 
+Clientes
+id | nombre     | email
+---+------------+-------------------
+1  | Juan Pérez | juan@example.com
+2  | María López| maria@example.com
+3  | Carlos Ruiz| carlos@example.com
+Pedidos 
+id | cliente_id | producto       | cantidad
+---+------------+----------------+---------
+1  | 1          | Laptop         | 1
+2  | 1          | Teléfono       | 2
+3  | 2          | Tableta        | 1
+
+  Si queremos ver los pedidos con los nombres de los clientes:
+
+SELECT Clientes.nombre, Pedidos.producto, Pedidos.cantidad
+FROM Clientes
+INNER JOIN Pedidos ON Clientes.id = Pedidos.cliente_id
+
+  Resultado: 
+nombre     | producto  | cantidad
+-----------+-----------+---------
+Juan Pérez | Laptop    | 1
+Juan Pérez | Teléfono  | 2
+María López| Tableta   | 1
